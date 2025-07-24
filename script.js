@@ -19,14 +19,14 @@ const jurisdictionToVariants = {
     "SK": ["rtp88_SK", "rtp91_SK", "rtp93_SK", "rtp94_SK", "rtp95_SK", "rtp96_SK"]
   };
   
-  // Jurisdictions checked by default:
-  const checkedByDefault = new Set(["NOT_APPLICABLE", "SOCIAL"]);
+const checkedByDefault = new Set(["NOT_APPLICABLE", "SOCIAL"]);
   
-  const jurisdictionContainer = document.getElementById("jurisdictionContainer");
-  jurisdictionContainer.className = "row"; // Use Bootstrap row class for layout
-  for (const jur in jurisdictionToVariants) {
+const jurisdictionContainer = document.getElementById("jurisdictionContainer");
+jurisdictionContainer.className = "row"; 
+
+for (const jur in jurisdictionToVariants) {
     const colDiv = document.createElement("div");
-    colDiv.className = "col-2 mb-2"; // 6 kolumn (12 / 2 = 6 per row)
+    colDiv.className = "col-2 mb-2"; 
   
     const formCheckDiv = document.createElement("div");
     formCheckDiv.className = "form-check";
@@ -48,61 +48,54 @@ const jurisdictionToVariants = {
     formCheckDiv.appendChild(label);
     colDiv.appendChild(formCheckDiv);
     jurisdictionContainer.appendChild(colDiv);
-  }
+}
   
+let originalData = {};
   
-  
-  // Store the uploaded JSON data here
-  let originalData = {};
-  
-  // Load JSON from file input
-  document.getElementById("fileInput").addEventListener("change", function (e) {
+document.getElementById("fileInput").addEventListener("change", function (e) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function (evt) {
-      try {
-        originalData = JSON.parse(evt.target.result);
-        document.getElementById("output").value = JSON.stringify(originalData, null, 2);
-        alert("JSON loaded successfully!");
-      } catch (err) {
-        alert("Invalid JSON file.");
-      }
+        try {
+            originalData = JSON.parse(evt.target.result);
+            document.getElementById("output").value = JSON.stringify(originalData, null, 2);
+            alert("JSON loaded successfully!");
+        } catch (err) {
+            alert("Invalid JSON file.");
+            }
     };
+
     reader.readAsText(file);
-  });
+});
   
-  // Add new game and update JSON structure with sorting
-  function addGame() {
+function addGame() {
     const gameName = document.getElementById("gameName").value.trim();
     if (!gameName) return alert("Enter a game name");
   
     const paths = {
-      "88": document.getElementById("path88").value.trim(),
-      "91": document.getElementById("path91").value.trim(),
-      "93": document.getElementById("path93").value.trim(),
-      "94": document.getElementById("path94").value.trim(),
-      "95": document.getElementById("path95").value.trim(),
-      "96": document.getElementById("path96").value.trim()
+        "88": document.getElementById("path88").value.trim(),
+        "91": document.getElementById("path91").value.trim(),
+        "93": document.getElementById("path93").value.trim(),
+        "94": document.getElementById("path94").value.trim(),
+        "95": document.getElementById("path95").value.trim(),
+        "96": document.getElementById("path96").value.trim()
     };
   
     Object.keys(jurisdictionToVariants).forEach(jur => {
-      const checkbox = document.getElementById(`jur_${jur}`);
-      if (!checkbox.checked) return;
+        const checkbox = document.getElementById(`jur_${jur}`);
+        if (!checkbox.checked) return;
   
-      jurisdictionToVariants[jur].forEach(variant => {
-        // Initialize variant if missing
+        jurisdictionToVariants[jur].forEach(variant => {
         if (!originalData[variant]) originalData[variant] = { games: {} };
         if (!originalData[variant].games[gameName]) {
-          originalData[variant].games[gameName] = { jurisdictions: {} };
+            originalData[variant].games[gameName] = { jurisdictions: {} };
         } else {
-          // Ensure jurisdictions container exists for the game
-          if (!originalData[variant].games[gameName].jurisdictions) {
+            if (!originalData[variant].games[gameName].jurisdictions) {
             originalData[variant].games[gameName].jurisdictions = {};
-          }
+            }
         }
   
-        // Extract RTP number from variant to pick path
         const rtpMatch = variant.match(/(\d{2})/);
         if (!rtpMatch) return;
         const rtp = rtpMatch[1];
@@ -111,14 +104,21 @@ const jurisdictionToVariants = {
   
         originalData[variant].games[gameName].jurisdictions[jur] = { gameModelFile: path };
   
-        // Sort games alphabetically
         const sortedGames = {};
         Object.keys(originalData[variant].games).sort().forEach(key => {
-          sortedGames[key] = originalData[variant].games[key];
+            sortedGames[key] = originalData[variant].games[key];
         });
+        
         originalData[variant].games = sortedGames;
-      });
+        });
     });
   
     document.getElementById("output").value = JSON.stringify(originalData, null, 2);
-  }
+}
+
+    function copyOutput() {
+        const output = document.getElementById("output");
+        navigator.clipboard.writeText(output.value)
+          .then(() => alert("JSON copied to clipboard! 😊"))
+          .catch(err => alert("Copy failed 😞"));
+      }
