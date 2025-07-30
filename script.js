@@ -17,7 +17,9 @@ const jurisdictionToVariants = {
     "SE": ["rtp88_SE", "rtp91_SE", "rtp93_SE", "rtp94_SE", "rtp95_SE", "rtp96_SE"],
     "UK": ["rtp88_UK", "rtp91_UK", "rtp93_UK", "rtp94_UK", "rtp95_UK"],
     "SK": ["rtp88_SK", "rtp91_SK", "rtp93_SK", "rtp94_SK", "rtp95_SK", "rtp96_SK"]
-  };
+};
+
+
   
 const checkedByDefault = new Set(["NOT_APPLICABLE", "SOCIAL"]);
   

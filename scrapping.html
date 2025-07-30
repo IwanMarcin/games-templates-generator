@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aktualizacja kursów</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    textarea, pre {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: monospace;
+      margin-top: 10px;
+    }
+    textarea {
+      height: 150px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    pre {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px #ccc;
+    }
+    .up { color: green; }
+    .down { color: red; }
+  </style>
+</head>
+<body>
+    <h2>Poprzedni stan (wklej tutaj):</h2>
+    <textarea id="previousInput" placeholder="Wklej poprzedni JSON..."></textarea>
+    <br>
+    <button id="updateBtn">UPDATE</button>
+    <pre id="output">Ładowanie danych...</pre>
+
+  <script>
+    const template = {
+      "BTC": { precision: 8, againstEurRate: 0 },
+      "mBTC": { precision: 5, againstEurRate: 0 },
+      "uBTC": { precision: 2, againstEurRate: 0 },
+      "ETH": { precision: 8, againstEurRate: 0 },
+      "mETH": { precision: 5, againstEurRate: 0 },
+      "uETH": { precision: 2, againstEurRate: 0 },
+      "LTC": { precision: 8, againstEurRate: 0 },
+      "mLTC": { precision: 5, againstEurRate: 0 },
+      "uLTC": { precision: 2, againstEurRate: 0 },
+      "TRX": { precision: 2, againstEurRate: 0 },
+      "DOG": { precision: 2, againstEurRate: 0 },
+      "XRP": { precision: 2, againstEurRate: 0 },
+      "BCH": { precision: 8, againstEurRate: 0 },
+      "mBCH": { precision: 8, againstEurRate: 0 },
+      "BNB": { precision: 6, againstEurRate: 0 },
+      "ADA": { precision: 2, againstEurRate: 0 },
+      "USDC": { precision: 2, againstEurRate: 0 },
+      "USDT": { precision: 2, againstEurRate: 0 },
+      "BUSD": { precision: 2, againstEurRate: 0 },
+      "EOS": { precision: 2, againstEurRate: 0 },
+      "DASH": { precision: 4, againstEurRate: 0 },
+      "XLM": { precision: 2, againstEurRate: 0 },
+      "TON": { precision: 2, againstEurRate: 0 },
+      "FTN": { precision: 2, againstEurRate: 0 },
+      "DOT": { precision: 4, againstEurRate: 0 },
+      "SOL": { precision: 4, againstEurRate: 0 }
+    };
+
+    const idToSymbol = {
+      bitcoin: "BTC",
+      ethereum: "ETH",
+      litecoin: "LTC",
+      tron: "TRX",
+      dogecoin: "DOG",
+      ripple: "XRP",
+      "bitcoin-cash": "BCH",
+      binancecoin: "BNB",
+      cardano: "ADA",
+      "usd-coin": "USDC",
+      tether: "USDT",
+      "binance-usd": "BUSD",
+      eos: "EOS",
+      dash: "DASH",
+      stellar: "XLM",
+      "the-open-network": "TON",
+      fasttoken: "FTN",
+      polkadot: "DOT",
+      solana: "SOL"
+    };
+
+    const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin,tron,dogecoin,ripple,bitcoin-cash,binancecoin,cardano,usd-coin,tether,binance-usd,eos,dash,stellar,the-open-network,fasttoken,polkadot,solana&vs_currencies=eur";
+
+    async function updateRates() {
+      const output = document.getElementById("output");
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        for (const [id, { eur }] of Object.entries(data)) {
+          const base = idToSymbol[id];
+          if (!base || !eur || eur === 0) continue;
+
+          const inverse = 1 / eur;
+
+          if (template[base]) {
+            template[base].againstEurRate = parseFloat(inverse.toFixed(template[base].precision));
+          }
+          if (template["m" + base]) {
+            template["m" + base].againstEurRate = parseFloat((inverse * 1000).toFixed(template["m" + base].precision));
+          }
+          if (template["u" + base]) {
+            template["u" + base].againstEurRate = parseFloat((inverse * 1000000).toFixed(template["u" + base].precision));
+          }
+        }
+
+        let previousInput = document.getElementById("previousInput").value;
+        previousInput = previousInput.trim();
+        if (previousInput && !previousInput.startsWith("{")) {
+            previousInput = "{" + previousInput + "}";
+        }
+        if (previousInput){
+            const previousData = JSON.parse(previousInput);
+            for (const [key, value] of Object.entries(previousData)) {
+                if (template[key]) {
+                    const previousRate = value.againstEurRate;
+                    const currentRate = template[key].againstEurRate;
+                    if (100 * (currentRate - previousRate) / previousRate > 10) {
+                        alert(`🔼 ${key} wzrosło o ${(100 * (currentRate - previousRate) / previousRate).toFixed(2)}%`);
+                    }
+                    if (100 * (currentRate - previousRate) / previousRate < -10) {
+                        alert(`🔽 ${key} spadło o ${(100 * (currentRate - previousRate) / previousRate).toFixed(2)}%`);
+                    }
+                }
+            }
+        }
+        output.textContent = JSON.stringify(template, null, 2);
+      } catch (e) {
+        output.textContent = "❌ Błąd podczas pobierania danych: " + e.message;
+      }
+    }
+
+    document.getElementById("updateBtn").addEventListener("click", updateRates);
+    updateRates(); // auto-start
+  </script>
+
+</body>
+</html>
