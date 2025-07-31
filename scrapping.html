@@ -39,11 +39,12 @@
   </style>
 </head>
 <body>
-    <h2>Poprzedni stan (wklej tutaj):</h2>
+    <h1>Crypto-currencies updater</h1>
+    <h2>Previous Rates (Paste here):</h2>
     <textarea id="previousInput" placeholder="Wklej poprzedni JSON..."></textarea>
     <br>
     <button id="updateBtn">UPDATE</button>
-    <pre id="output">Ładowanie danych...</pre>
+    <pre id="output">Data loading...</pre>
 
   <script>
     const template = {
@@ -134,17 +135,17 @@
                     const previousRate = value.againstEurRate;
                     const currentRate = template[key].againstEurRate;
                     if (100 * (currentRate - previousRate) / previousRate > 10) {
-                        alert(`🔼 ${key} wzrosło o ${(100 * (currentRate - previousRate) / previousRate).toFixed(2)}%`);
+                        alert(`🔼 ${key} increased by  ${(100 * (currentRate - previousRate) / previousRate).toFixed(2)}%\nOld value: ${previousRate}\nNew value: ${currentRate}`);
                     }
                     if (100 * (currentRate - previousRate) / previousRate < -10) {
-                        alert(`🔽 ${key} spadło o ${(100 * (currentRate - previousRate) / previousRate).toFixed(2)}%`);
+                        alert(`🔽 ${key} decreased by ${(100 * (currentRate - previousRate) / previousRate).toFixed(2)}%\nOld value: ${previousRate}\nNew value: ${currentRate}`);
                     }
                 }
             }
         }
         output.textContent = JSON.stringify(template, null, 2);
       } catch (e) {
-        output.textContent = "❌ Błąd podczas pobierania danych: " + e.message;
+        output.textContent = "❌ Error during data download: " + e.message;
       }
     }
 
