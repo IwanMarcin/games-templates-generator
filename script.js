@@ -24,7 +24,6 @@ const jurisdictionToVariantsFD = {
 };
 
 const checkedByDefault = new Set(["NOT_APPLICABLE", "SOCIAL"]);
-  
 const jurisdictionContainer = document.getElementById("jurisdictionContainer");
 jurisdictionContainer.className = "row"; 
 
@@ -99,7 +98,7 @@ function addGameKL() {
             originalData[variant].games[gameName].jurisdictions = {};
             }
         }
-  
+
         const rtpMatch = variant.match(/(\d{2})/);
         if (!rtpMatch) return;
         const rtp = rtpMatch[1];
@@ -115,6 +114,132 @@ function addGameKL() {
         
         originalData[variant].games = sortedGames;
         });
+
+        if (minBaseBetCheckbox.checked && jur_NOT_APPLICABLE.checked) {
+            const baseBetGroups = {
+                "min_base_bet_NOT_APPLICABLE": ["NOT_APPLICABLE"]
+            };
+    
+            Object.entries(baseBetGroups).forEach(([variant, jurisdictions]) => {
+                if (!originalData[variant]) originalData[variant] = { games: {} };
+                if (!originalData[variant].games[gameName]) {
+                    originalData[variant].games[gameName] = { jurisdictions: {} };
+                } else if (!originalData[variant].games[gameName].jurisdictions) {
+                    originalData[variant].games[gameName].jurisdictions = {};
+                }
+    
+                jurisdictions.forEach(jur => {
+                    const checkbox = document.getElementById(`jur_${jur}`);
+                    if (!checkbox || !checkbox.checked) return;
+    
+                    originalData[variant].games[gameName].jurisdictions[jur] = {
+                        defaultBaseBet: {
+                            value: Number(document.getElementById('minBaseBetValue').value.trim())
+                        }
+                    };
+                });
+    
+                const sortedGames = {};
+                Object.keys(originalData[variant].games).sort().forEach(key => {
+                    sortedGames[key] = originalData[variant].games[key];
+                });
+                originalData[variant].games = sortedGames;
+            });
+        }
+        if (minBaseBetCheckbox.checked && jur_NL.checked) {
+            const baseBetGroups = {
+                "min_base_bet_NL": ["NL"]
+            };
+    
+            Object.entries(baseBetGroups).forEach(([variant, jurisdictions]) => {
+                if (!originalData[variant]) originalData[variant] = { games: {} };
+                if (!originalData[variant].games[gameName]) {
+                    originalData[variant].games[gameName] = { jurisdictions: {} };
+                } else if (!originalData[variant].games[gameName].jurisdictions) {
+                    originalData[variant].games[gameName].jurisdictions = {};
+                }
+    
+                jurisdictions.forEach(jur => {
+                    const checkbox = document.getElementById(`jur_${jur}`);
+                    if (!checkbox || !checkbox.checked) return;
+    
+                    originalData[variant].games[gameName].jurisdictions[jur] = {
+                        defaultBaseBet: {
+                            value: Number(document.getElementById('minBaseBetValue').value.trim())
+                        }
+                    };
+                });
+    
+                const sortedGames = {};
+                Object.keys(originalData[variant].games).sort().forEach(key => {
+                    sortedGames[key] = originalData[variant].games[key];
+                });
+                originalData[variant].games = sortedGames;
+            });
+        }
+        if (minBaseBetCheckbox.checked && jur_NOT_APPLICABLE.checked && jur_MT.checked && jur_SE.checked) {
+            const baseBetGroups = {
+                "min_base_bet_Thorne+Realm": ["NOT_APPLICABLE", "MT", "SE"]
+            };
+    
+            Object.entries(baseBetGroups).forEach(([variant, jurisdictions]) => {
+                if (!originalData[variant]) originalData[variant] = { games: {} };
+                if (!originalData[variant].games[gameName]) {
+                    originalData[variant].games[gameName] = { jurisdictions: {} };
+                } else if (!originalData[variant].games[gameName].jurisdictions) {
+                    originalData[variant].games[gameName].jurisdictions = {};
+                }
+    
+                jurisdictions.forEach(jur => {
+                    const checkbox = document.getElementById(`jur_${jur}`);
+                    if (!checkbox || !checkbox.checked) return;
+    
+                    originalData[variant].games[gameName].jurisdictions[jur] = {
+                        defaultBaseBet: {
+                            value: Number(document.getElementById('minBaseBetValue').value.trim())
+                        }
+                    };
+                });
+    
+                const sortedGames = {};
+                Object.keys(originalData[variant].games).sort().forEach(key => {
+                    sortedGames[key] = originalData[variant].games[key];
+                });
+                originalData[variant].games = sortedGames;
+            });
+        }
+        if (minBaseBetCheckbox.checked && jur_HR.checked) {
+            const baseBetGroups = {
+                "min_base_bet_HR": ["HR"]
+            };
+    
+            Object.entries(baseBetGroups).forEach(([variant, jurisdictions]) => {
+                if (!originalData[variant]) originalData[variant] = { games: {} };
+                if (!originalData[variant].games[gameName]) {
+                    originalData[variant].games[gameName] = { jurisdictions: {} };
+                } else if (!originalData[variant].games[gameName].jurisdictions) {
+                    originalData[variant].games[gameName].jurisdictions = {};
+                }
+    
+                jurisdictions.forEach(jur => {
+                    const checkbox = document.getElementById(`jur_${jur}`);
+                    if (!checkbox || !checkbox.checked) return;
+    
+                    originalData[variant].games[gameName].jurisdictions[jur] = {
+                        defaultBaseBet: {
+                            value: Number(document.getElementById('minBaseBetValue').value.trim())
+                        }
+                    };
+                });
+    
+                const sortedGames = {};
+                Object.keys(originalData[variant].games).sort().forEach(key => {
+                    sortedGames[key] = originalData[variant].games[key];
+                });
+                originalData[variant].games = sortedGames;
+            });
+        }
+
     });
   
     document.getElementById("output").value = JSON.stringify(originalData, null, 2);
@@ -154,7 +279,7 @@ function addGameFD() {
         if (!path) return;
   
         originalData[variant].games[gameName].jurisdictions[jur] = { gameModelFile: path };
-  
+
         const sortedGames = {};
         Object.keys(originalData[variant].games).sort().forEach(key => {
             sortedGames[key] = originalData[variant].games[key];
@@ -167,9 +292,9 @@ function addGameFD() {
     document.getElementById("output").value = JSON.stringify(originalData, null, 2);
 }
 
-    function copyOutput() {
+function copyOutput() {
         const output = document.getElementById("output");
         navigator.clipboard.writeText(output.value)
           .then(() => alert("JSON copied to clipboard! 😊"))
           .catch(err => alert("Copy failed 😞"));
-      }
+    }
