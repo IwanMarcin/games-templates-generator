@@ -16,7 +16,10 @@ const jurisdictionToVariants = {
     "BG": ["rtp88_BG", "rtp91_BG", "rtp93_BG", "rtp94_BG", "rtp95_BG"],
     "SE": ["rtp88_SE", "rtp91_SE", "rtp93_SE", "rtp94_SE", "rtp95_SE", "rtp96_SE"],
     "UK": ["rtp88_UK", "rtp91_UK", "rtp93_UK", "rtp94_UK", "rtp95_UK"],
-    "SK": ["rtp88_SK", "rtp91_SK", "rtp93_SK", "rtp94_SK", "rtp95_SK", "rtp96_SK"]
+    "SK": ["rtp88_SK", "rtp91_SK", "rtp93_SK", "rtp94_SK", "rtp95_SK", "rtp96_SK"],
+    "DK": ["rtp88_DK", "rtp91_DK", "rtp93_DK", "rtp94_DK", "rtp95_DK", "rtp96_DK"],
+    "GR": ["rtp88_GR", "rtp91_GR", "rtp93_GR", "rtp94_GR", "rtp95_GR", "rtp96_GR"],
+    "CAON": ["rtp88_CAON", "rtp91_CAON", "rtp93_CAON", "rtp94_CAON", "rtp95_CAON", "rtp96_CAON"]
 };
 
 const jurisdictionToVariantsFD = {
