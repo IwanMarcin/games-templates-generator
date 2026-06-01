@@ -1,11 +1,11 @@
 const jurisdictionToVariants = {
     "NOT_APPLICABLE": ["rtp-variant88", "rtp-variant91", "rtp-variant93", "rtp-variant94", "rtp-variant95", "rtp-variant96", "solid95", "rtp-variant94+_circus", "rtp96_Playfortuna"],
-    "SOCIAL": ["rtp88_SOCIAL", "rtp91_SOCIAL", "rtp93_SOCIAL", "rtp94_SOCIAL", "rtp95_SOCIAL", "rtp96_SOCIAL", "rtp96_High5Casino_SOCIAL", "rtp94_SOCIAL_Pulsz"],
+    "SOCIAL": ["rtp88_SOCIAL", "rtp91_SOCIAL", "rtp93_SOCIAL", "rtp94_SOCIAL", "rtp95_SOCIAL", "rtp96_SOCIAL", "rtp96_High5Casino_SOCIAL", "rtp94+_SOCIAL_Pulsz"],
     "MT": ["rtp88_MT", "rtp91_MT", "rtp93_MT", "rtp94_MT", "rtp95_MT", "rtp96_MT", "rtp94+_MT_circus"],
     "CZ": ["rtp88_CZ", "rtp91_CZ", "rtp93_CZ", "rtp94_CZ", "rtp95_CZ", "rtp96_CZ"],
     "RO": ["rtp88_RO", "rtp91_RO", "rtp93_RO", "rtp94_RO", "rtp95_RO", "rtp96_RO"],
     "CH": ["rtp88_CH", "rtp91_CH", "rtp93_CH", "rtp94_CH", "rtp95_CH", "rtp96_CH"],
-    "LV": ["rtp88_CH", "rtp91_CH", "rtp93_CH", "rtp94_CH", "rtp95_CH", "rtp96_CH"],
+    "LV": ["rtp88_LV", "rtp91_LV", "rtp93_LV", "rtp94_LV", "rtp95_LV", "rtp96_LV"],
     "BR": ["rtp88_BR", "rtp91_BR", "rtp93_BR", "rtp94_BR", "rtp95_BR", "rtp96_BR"],
     "DE": ["rtp88_DE", "rtp91_DE"],
     "IT": ["rtp91_IT", "rtp93_IT", "rtp94_IT", "rtp95_IT", "rtp96_IT"],
@@ -20,7 +20,8 @@ const jurisdictionToVariants = {
     "DK": ["rtp88_DK", "rtp91_DK", "rtp93_DK", "rtp94_DK", "rtp95_DK", "rtp96_DK"],
     "GR": ["rtp88_GR", "rtp91_GR", "rtp93_GR", "rtp94_GR", "rtp95_GR", "rtp96_GR"],
     "CAON": ["rtp88_CAON", "rtp91_CAON", "rtp93_CAON", "rtp94_CAON", "rtp95_CAON", "rtp96_CAON"],
-    "CO": ["rtp88_CO", "rtp91_CO", "rtp93_CO", "rtp94_CO", "rtp95_CO", "rtp96_CO"]
+    "CO": ["rtp88_CO", "rtp91_CO", "rtp93_CO", "rtp94_CO", "rtp95_CO", "rtp96_CO"],
+    "PH": ["rtp91_PH", "rtp93_PH", "rtp94_PH", "rtp95_PH", "rtp96_PH"]
 };
 
 const jurisdictionToVariantsFD = {
@@ -103,14 +104,27 @@ function addGameKL() {
             }
         }
 
-        const rtpMatch = variant.match(/(\d{2})/);
-        if (!rtpMatch) return;
-        const rtp = rtpMatch[1];
-        const path = paths[rtp];
-        if (!path) return;
-  
-        originalData[variant].games[gameName].jurisdictions[jur] = { gameModelFile: path };
-  
+        const isHighVariant = variant.includes("94+");
+
+        if (isHighVariant) {
+            const path94 = paths["94"];
+            const path93 = paths["93"];
+            const path95 = paths["95"];
+        
+            const resolvedPath = path94 === path93 ? path95 : path94;
+            if (!resolvedPath) return;
+        
+            originalData[variant].games[gameName].jurisdictions[jur] = { gameModelFile: resolvedPath };
+        } else {
+            const rtpMatch = variant.match(/(\d{2})/);
+            if (!rtpMatch) return;
+            const rtp = rtpMatch[1];
+            const path = paths[rtp];
+            if (!path) return;
+        
+            originalData[variant].games[gameName].jurisdictions[jur] = { gameModelFile: path };
+        }
+    
         const sortedGames = {};
         Object.keys(originalData[variant].games).sort().forEach(key => {
             sortedGames[key] = originalData[variant].games[key];
