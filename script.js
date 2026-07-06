@@ -28,6 +28,11 @@ const jurisdictionToVariantsFD = {
     "NOT_APPLICABLE": ["rtp-variant88", "rtp-variant91", "rtp-variant93", "rtp-variant94", "rtp-variant95", "rtp-variant96"]
 };
 
+const jurisdictionToVariantsDR = {
+    "NOT_APPLICABLE": ["rtp-variant88", "rtp-variant91", "rtp-variant93", "rtp-variant94", "rtp-variant95", "rtp-variant96"],
+    "SOCIAL": ["rtp88_SOCIAL", "rtp91_SOCIAL", "rtp93_SOCIAL", "rtp94_SOCIAL", "rtp95_SOCIAL", "rtp96_SOCIAL"]
+};
+
 const checkedByDefault = new Set(["NOT_APPLICABLE", "SOCIAL"]);
 const jurisdictionContainer = document.getElementById("jurisdictionContainer");
 jurisdictionContainer.className = "row"; 
@@ -281,6 +286,53 @@ function addGameFD() {
         if (!checkbox.checked) return;
   
         jurisdictionToVariantsFD[jur].forEach(variant => {
+        if (!originalData[variant]) originalData[variant] = { games: {} };
+        if (!originalData[variant].games[gameName]) {
+            originalData[variant].games[gameName] = { jurisdictions: {} };
+        } else {
+            if (!originalData[variant].games[gameName].jurisdictions) {
+            originalData[variant].games[gameName].jurisdictions = {};
+            }
+        }
+  
+        const rtpMatch = variant.match(/(\d{2})/);
+        if (!rtpMatch) return;
+        const rtp = rtpMatch[1];
+        const path = paths[rtp];
+        if (!path) return;
+  
+        originalData[variant].games[gameName].jurisdictions[jur] = { gameModelFile: path };
+
+        const sortedGames = {};
+        Object.keys(originalData[variant].games).sort().forEach(key => {
+            sortedGames[key] = originalData[variant].games[key];
+        });
+        
+        originalData[variant].games = sortedGames;
+        });
+    });
+  
+    document.getElementById("output").value = JSON.stringify(originalData, null, 2);
+}
+
+function addGameDR() {
+    const gameName = document.getElementById("gameName").value.trim();
+    if (!gameName) return alert("Enter a game name");
+  
+    const paths = {
+        "88": document.getElementById("path88").value.trim(),
+        "91": document.getElementById("path91").value.trim(),
+        "93": document.getElementById("path93").value.trim(),
+        "94": document.getElementById("path94").value.trim(),
+        "95": document.getElementById("path95").value.trim(),
+        "96": document.getElementById("path96").value.trim()
+    };
+  
+    Object.keys(jurisdictionToVariantsDR).forEach(jur => {
+        const checkbox = document.getElementById(`jur_${jur}`);
+        if (!checkbox.checked) return;
+  
+        jurisdictionToVariantsDR[jur].forEach(variant => {
         if (!originalData[variant]) originalData[variant] = { games: {} };
         if (!originalData[variant].games[gameName]) {
             originalData[variant].games[gameName] = { jurisdictions: {} };
