@@ -24,6 +24,11 @@
         </div>
 
         <h3>Set paths for RTP variants:</h3>
+        <p>In case the game <b>has all RTP variants</b>, you can paste the default math for this game and click the "Autofill" button.<br> Nevertheless, please be careful and <b>every time do a double-check</b>.<br> Otherwise you might add the wrong gameModelFiles!</p>
+        <div class="mb-3 d-flex gap-2">
+            <input type="text" id="samplepath" class="form-control" placeholder="default path">
+            <button class="btn btn-outline-primary" onclick="autofillPaths()">Autofill</button>
+        </div>
         <div class="mb-3">
             <label>88: <input type="text" id="path88" class="form-control" placeholder="path for RTP 88"></label>
             <label>91: <input type="text" id="path91" class="form-control" placeholder="path for RTP 91"></label>

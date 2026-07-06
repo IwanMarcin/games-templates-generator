@@ -368,3 +368,29 @@ function copyOutput() {
           .then(() => alert("JSON copied to clipboard! 😊"))
           .catch(err => alert("Copy failed 😞"));
     }
+
+function autofillPaths() {
+    const sample = document.getElementById('samplepath').value.trim();
+    if (!sample) {
+        alert('Wklej najpierw przykładową ścieżkę w pole "default path".');
+        return;
+    }
+
+    const match = sample.match(/^(.*_)(\d{2,3})(\.json)$/i);
+    if (!match) {
+        alert('Nie udało się rozpoznać numeru RTP w podanej ścieżce.\nUpewnij się, że ścieżka kończy się np. "..._91.json".');
+        return;
+    }
+
+    const prefix = match[1]; 
+    const suffix = match[3]; 
+
+    const rtpVariants = ['88', '91', '93', '94', '95', '96'];
+
+    rtpVariants.forEach(rtp => {
+        const inputEl = document.getElementById('path' + rtp);
+        if (inputEl) {
+            inputEl.value = prefix + rtp + suffix;
+        }
+    });
+}
