@@ -13,7 +13,7 @@ const jurisdictionToVariants = {
     "NL": ["rtp88_NL", "rtp91_NL", "rtp93_NL", "rtp94_NL", "rtp95_NL", "rtp96_NL", "rtp94+_NL_circus"],
     "PT": ["rtp88_PT", "rtp91_PT", "rtp93_PT", "rtp94_PT", "rtp95_PT", "rtp96_PT"],
     "HR": ["rtp88_HR", "rtp91_HR", "rtp93_HR", "rtp94_HR", "rtp95_HR", "rtp96_HR"],
-    "BG": ["rtp88_BG", "rtp91_BG", "rtp93_BG", "rtp94_BG", "rtp95_BG"],
+    "BG": ["rtp88_BG", "rtp91_BG", "rtp93_BG", "rtp94_BG", "rtp95_BG", "rtp96_BG"],
     "SE": ["rtp88_SE", "rtp91_SE", "rtp93_SE", "rtp94_SE", "rtp95_SE", "rtp96_SE"],
     "UK": ["rtp88_UK", "rtp91_UK", "rtp93_UK", "rtp94_UK", "rtp95_UK"],
     "SK": ["rtp88_SK", "rtp91_SK", "rtp93_SK", "rtp94_SK", "rtp95_SK", "rtp96_SK"],
