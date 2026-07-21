@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Round Checker</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1>Advanced information about the round: Round checker</h1>
+            <h2>Other tools:</h2>
+            <button class="btn btn-secondary mt-3" onclick="location.href='index.html'">Adding game into JSON tool</button>
+            <button class="btn btn-secondary mt-3" onclick="location.href='scrapping.html'">Generate JSON with currencies tool</button>
+            <hr>
+            <div class="mb-3 d-flex gap-2">
+                <input type="text" id="roundIdInput" class="form-control" placeholder="Enter roundId">
+                <button class="btn btn-outline-primary" id="checkBtn" type="button"><b>CHECK</b></button>
+            </div>
+            <div id="statusBox" class="mt-2 small"></div>
+            <div id="resultCard" class="card p-4 mb-4 shadow-sm d-none">
+                <h5 class="mb-3">Round details<span id="providerBadge" class="badge ms-2"></span></h5>
+                <table class="table table-sm mb-0" id="resultInfo">
+                    <tbody>
+                        <tr><th>Round ID</th><td id="infoRoundId"></td></tr>
+                        <tr><th>Username</th><td id="infoUsername"></td></tr>
+                        <tr><th>Operator Code</th><td id="infoOperatorCode"></td></tr>
+                        <tr><th>Cage Code</th><td id="infoCageCode"></td></tr>
+                        <tr><th>Game Code</th><td id="infoGameCode"></td></tr>
+                        <tr><th>Configuration Jurisdiction</th><td id="infoJurisdiction"></td></tr>
+                        <tr><th>Game Model</th><td id="infoGameModel"></td></tr>
+                        <tr><th>Bet Amount</th><td id="infoBetAmount"></td></tr>
+                        <tr><th>Win Amount</th><td id="infoWinAmount"></td></tr>
+                        <tr><th>Balance Check (Balance after win − Balance after bet == Win Amount)</th><td id="infoBalanceCheck"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="actionButtons" class="d-flex flex-wrap gap-2 d-none">
+                <a href="#" target="_blank" rel="noopener" id="btnHistory" class="btn btn-outline-primary btn-action">Full Game History</a>
+                <a href="#" target="_blank" rel="noopener" id="btnReplay" class="btn btn-outline-primary btn-action">Replay</a>
+                <a href="#" target="_blank" rel="noopener" id="btnGrafana" class="btn btn-outline-primary btn-action">Grafana</a>
+                <a href="#" target="_blank" rel="noopener" id="btnKibanaLogs" class="btn btn-outline-primary btn-action">Kibana Logs</a>
+                <a href="#" target="_blank" rel="noopener" id="btnKibanaRounds" class="btn btn-outline-primary btn-action">Kibana Rounds</a>
+                <a href="#" target="_blank" rel="noopener" id="btnStatsData" class="btn btn-outline-info btn-action">Statistics Data (raw)</a>
+            </div>
+            <div id="kibanaNote" class="alert alert-warning mt-3 d-none" role="alert">
+                ⚠️ <strong>Kibana Logs</strong> only shows data from the last <strong>14 days</strong>. For older rounds, use <strong>Kibana Rounds</strong>.
+            </div>
+            <div id="statsSection" class="card p-4 mt-4 shadow-sm d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Statistics (round's day)</h5>
+                    <button class="btn btn-sm btn-info" id="statsBtn" type="button">Calculate statistics</button>
+                </div>
+                <div id="statsStatus" class="small mb-2"></div>
+                <table class="table table-sm mb-0 d-none" id="statsTable">
+                    <tbody>
+                        <tr><th>Number of rounds</th><td id="statTotalRounds"></td></tr>
+                        <tr><th>Total bet amount (base paid spins)</th><td id="statTotalBet"></td></tr>
+                        <tr><th>Total win amount (all spins)</th><td id="statTotalWin"></td></tr>
+                        <tr><th>Total win amount BASE GAME</th><td id="statBaseWin"></td></tr>
+                        <tr><th>Total win amount FREE SPINS</th><td id="statFSWin"></td></tr>
+                        <tr><th>RTP</th><td id="statRTP"></td></tr>
+                        <tr><th>Base Game RTP</th><td id="statBaseRTP"></td></tr>
+                        <tr><th>Free Spins RTP</th><td id="statFSRTP"></td></tr>
+                        <tr><th>Hit Frequency</th><td id="statHitFreq"></td></tr>
+                        <tr><th>Bonus Round Frequency <small class="text-secondary">(based on winAmountSources.id === "FREE_SPIN")</small></th><td id="statBonusFreq"></td></tr>
+                        <tr><th>Average Win Amount</th><td id="statAvgWin"></td></tr>
+                        <tr><th>Average Bet</th><td id="statAvgBet"></td></tr>
+                        <tr><th>Standard Deviation</th><td id="statStdDev"></td></tr>
+                        <tr><th>Diff (round bet − avg bet)</th><td id="statBetDiff"></td></tr>
+                    </tbody>
+                </table>
+                <h6 class="mt-4 mb-2">Bet Pattern Analysis</h6>
+                <ul id="betPatternList" class="mb-0"></ul>
+                <h6 class="mt-4 mb-2">Hit distribution by multiplier (winAmount / betAmount)</h6>
+                <table class="table table-sm mb-0 d-none" id="multiplierTable">
+                    <thead>
+                        <tr><th>Multiplier</th><th>Number of rounds</th></tr>
+                    </thead>
+                    <tbody id="multiplierTableBody"></tbody>
+                </table>
+                <h6 class="mt-4 mb-2">Timeline — Bet vs Win</h6>
+                <canvas id="timelineChart" height="500"></canvas>   
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+        <script src="script_rc.js" defer></script>
+    </body>
+</html>
